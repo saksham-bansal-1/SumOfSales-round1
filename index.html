@@ -5,40 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sales Summary 611</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        #app-status {
-            margin-bottom: 20px;
-            padding: 10px;
-            background-color: #e7f3fe;
-            color: #31708f;
-            border: 1px solid #bce8f1;
-            border-radius: 5px;
-        }
-        #sales-summary {
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #total-sales { font-size: 24px; font-weight: bold; }
+        #app-status { margin-top: 10px; color: gray; }
     </style>
 </head>
 <body>
+    <h1>Sales Summary 611</h1>
+    <div>Total Sales: <span id="total-sales">0.00</span></div>
     <div id="app-status">Loading...</div>
-    <div id="sales-summary">
-        <h1>Sales Summary</h1>
-        <p>Total Sales: $10,000</p>
-        <p>Total Orders: 150</p>
-        <p>Average Order Value: $66.67</p>
-    </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById("app-status").textContent = "Loaded successfully!";
-        });
+        fetch('sales.csv')
+            .then(response => response.text())
+            .then(data => {
+                const rows = data.split('\n').slice(1);
+                let total = 0;
+                rows.forEach(row => {
+                    const columns = row.split(',');
+                    const category = parseInt(columns[0]);
+                    const sales = parseFloat(columns[1]);
+                    if (category <= 21) {
+                        total += sales;
+                    }
+                });
+                document.getElementById('total-sales').textContent = total.toFixed(2);
+                document.getElementById('app-status').textContent = 'Load complete';
+            })
+            .catch(error => {
+                document.getElementById('app-status').textContent = 'Error loading data';
+                console.error('Error:', error);
+            });
     </script>
 </body>
 </html>
